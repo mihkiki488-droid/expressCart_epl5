@@ -31,7 +31,7 @@ router.get('/admin/users', restrict, async (req, res) => {
 // edit user
 router.get('/admin/user/edit/:id', restrict, async (req, res) => {
     const db = req.app.db;
-    const user = await db.users.findOne({ _id: getId(req.params.id) });
+    const user = await db.users.findOne({ _id: { $eq: getId(req.params.id) } });
 
     // Check user is found
     if(!user){
@@ -178,7 +178,7 @@ router.post('/admin/user/update', restrict, async (req, res) => {
 
     try{
         const updatedUser = await db.users.findOneAndUpdate(
-            { _id: getId(req.body.userId) },
+            { _id: { $eq: getId(req.body.userId) } },
             {
                 $set: updateDoc
             }, { multi: false, returnOriginal: false }
@@ -223,7 +223,7 @@ router.post('/admin/user/insert', restrict, async (req, res) => {
     }
 
     // check for existing user
-    const user = await db.users.findOne({ userEmail: req.body.userEmail });
+    const user = await db.users.findOne({ userEmail: { $eq: req.body.userEmail } });
     if(user){
         console.error(colors.red('Failed to insert user, possibly already exists'));
         res.status(400).json({ message: 'A user with that email address already exists' });
